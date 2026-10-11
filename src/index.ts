@@ -10,6 +10,7 @@ import {
 import axios from 'axios';
 import { z } from 'zod';
 import { statsTools, statsHandlers } from './stats.js';
+import { rankingTools, rankingHandlers } from './rankings.js';
 
 // ESPN API Base URLs
 const ESPN_API_BASE = 'https://site.api.espn.com/apis/site/v2/sports';
@@ -173,7 +174,8 @@ function createMcpServer({ config, logger }: { config: any; logger: any }) {
             properties: {}
           }
         },
-        ...statsTools
+        ...statsTools,
+        ...rankingTools
       ] as Tool[]
     };
   });
@@ -197,6 +199,7 @@ function createMcpServer({ config, logger }: { config: any; logger: any }) {
           return await getAvailableSports();
         default:
           if (statsHandlers[name]) return await statsHandlers[name](args);
+          if (rankingHandlers[name]) return await rankingHandlers[name](args);
           throw new Error(`Unknown tool: ${name}`);
       }
     } catch (error) {
