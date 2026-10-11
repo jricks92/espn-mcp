@@ -9,6 +9,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import axios from 'axios';
 import { z } from 'zod';
+import { statsTools, statsHandlers } from './stats.js';
 
 // ESPN API Base URLs
 const ESPN_API_BASE = 'https://site.api.espn.com/apis/site/v2/sports';
@@ -171,7 +172,8 @@ function createMcpServer({ config, logger }: { config: any; logger: any }) {
             type: 'object',
             properties: {}
           }
-        }
+        },
+        ...statsTools
       ] as Tool[]
     };
   });
@@ -194,6 +196,7 @@ function createMcpServer({ config, logger }: { config: any; logger: any }) {
         case 'get_available_sports':
           return await getAvailableSports();
         default:
+          if (statsHandlers[name]) return await statsHandlers[name](args);
           throw new Error(`Unknown tool: ${name}`);
       }
     } catch (error) {
