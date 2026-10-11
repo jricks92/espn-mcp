@@ -2,6 +2,30 @@
 
 A Model Context Protocol (MCP) server that provides access to live sports data from ESPN's API endpoints. This server allows AI agents to retrieve real-time sports scores, news, team information, game details, and rankings across multiple sports and leagues.
 
+## About this fork
+
+Fork of [ShawnDM/espn-mcp](https://github.com/ShawnDM/espn-mcp). The upstream tools are
+unchanged. This fork adds tools that return **compact text instead of ESPN's raw JSON**, which
+is often hundreds of kilobytes per call:
+
+| Tool | Returns |
+|---|---|
+| `list_games` | One line per game: gameId, matchup (with AP rank), score, status |
+| `get_box_score` | Line score, team stats and per-player stat tables |
+| `get_play_by_play` | Football grouped by drive with down & distance; other sports as a play list |
+| `get_poll` | College football AP, AFCA Coaches, CFP committee rankings, CFP seedings, FCS Coaches |
+| `get_standings` | NFL by division or conference; college football conference standings (FBS/FCS) |
+| `get_power_index` | ESPN Football Power Index for NFL and college football |
+
+Every tool is annotated read-only (`readOnlyHint: true`, `destructiveHint: false`).
+
+Run it with Docker. The server speaks MCP Streamable HTTP on `POST /mcp`:
+
+```bash
+docker build -t espn-mcp .
+docker run --rm -p 3000:3000 espn-mcp
+```
+
 ## Features
 
 - **Live Sports Scores**: Get real-time scores and game information
