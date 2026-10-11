@@ -40,6 +40,15 @@ const SPORTS_CONFIG = {
   }
 };
 
+// Every tool only issues GET requests to ESPN's public API: nothing is written anywhere.
+// MCP annotations are hints; clients may use them to skip approval prompts.
+const READ_ONLY_ANNOTATIONS = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: true,
+};
+
 // Create MCP server function
 function createMcpServer({ config, logger }: { config: any; logger: any }) {
   const server = new Server(
@@ -176,7 +185,7 @@ function createMcpServer({ config, logger }: { config: any; logger: any }) {
         },
         ...statsTools,
         ...rankingTools
-      ] as Tool[]
+      ].map((tool) => ({ ...tool, annotations: READ_ONLY_ANNOTATIONS })) as Tool[]
     };
   });
 
